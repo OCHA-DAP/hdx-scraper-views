@@ -57,16 +57,17 @@ def main(
             views = Views(configuration, retriever, temp_dir)
             datasets = views.generate_datasets()
 
-            datasets[0].update_from_yaml(
-                path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")
-            )
-            datasets[0].create_in_hdx(
-                remove_additional_resources=True,
-                match_resource_order=False,
-                hxl_update=False,
-                updated_by_script=_UPDATED_BY_SCRIPT,
-                batch=info["batch"],
-            )
+            for dataset in datasets:
+                dataset.update_from_yaml(
+                    path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")
+                )
+                dataset.create_in_hdx(
+                    remove_additional_resources=True,
+                    match_resource_order=False,
+                    hxl_update=False,
+                    updated_by_script=_UPDATED_BY_SCRIPT,
+                    batch=info["batch"],
+                )
 
 
 if __name__ == "__main__":

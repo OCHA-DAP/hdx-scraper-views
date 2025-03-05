@@ -30,7 +30,7 @@ class Views:
             iso3 = Country.get_iso3_country_code_fuzzy(country)
 
             if iso3[0] is None:  # kosovo
-                print("could not match ", country)
+                print("could not match", country)
                 continue
 
             location_name = Country.get_country_name_from_iso3(iso3[0])
@@ -59,7 +59,7 @@ class Views:
         headers = [th.text.strip() for th in rows[0].find_all("th")]
 
         # Extract data as a list of dictionaries
-        datasets_list = []
+        models_list = []
         for row in rows[1:]:  # Skip headers
             cells = row.find_all("td")
             row_data = {}
@@ -70,9 +70,9 @@ class Views:
                 else:
                     row_data[headers[i]] = cells[i].text.strip()
 
-            datasets_list.append(row_data)
+            models_list.append(row_data)
 
-        return datasets_list
+        return models_list
 
     def get_api_data(self, run, loa, filters="") -> dict:
         base_url = self._configuration["base_url"]
@@ -99,16 +99,15 @@ class Views:
 
     def generate_datasets(self) -> List:
         models = self.get_models_list()
+        codebook_url = models[0]["Codebook"]
         latest_run = models[0]["Dataset"]
         latest_cm_data = self.get_api_data(latest_run, "cm")  # get data from latest dataset
         locations = self.get_locations(latest_cm_data["data"])
+        start_date = self.get_date(latest_cm_data["start_date"])
+        end_date = self.get_date(latest_cm_data["end_date"])
 
         datasets = []
         for location in locations[:1]:
-            cm_data = self.get_api_data(latest_run, "cm", f"?iso={location['code']}")
-            start_date = self.get_date(cm_data["start_date"])
-            end_date = self.get_date(cm_data["end_date"])
-
             # Create dataset
             dataset_info = self._configuration
             dataset_title = f"{location['name']} - {dataset_info['title']}"
@@ -121,8 +120,10 @@ class Views:
             dataset.add_tags(dataset_info["tags"])
             dataset.set_time_period(start_date, end_date)
 
-            # Create resource
-            resource_name = f"{slugified_name}.csv"
+            # Create country-month resource
+            cm_data = self.get_api_data(latest_run, "cm", f"?iso={location['code']}")
+
+            resource_name = f"{slugified_name}-country-month.csv"
             resource_description = dataset_info["description"]
             resource = {
                 "name": resource_name,
@@ -136,31 +137,47 @@ class Views:
                 list(cm_data["data"][0].keys()),
                 encoding="utf-8",
             )
+
+            # Create PRIO-GRID-month resource
+            pgm_data = self.get_api_data(latest_run, "pgm", f"?iso={location['code']}")
+            if pgm_data["data"]:
+                pgm_resource_name = f"{slugified_name}-priogrid-month.csv"
+                pgm_resource_description = dataset_info["description"]
+                pgm_resource = {
+                    "name": pgm_resource_name,
+                    "description": pgm_resource_description,
+                }
+                dataset.generate_resource_from_rows(
+                    self._temp_dir,
+                    pgm_resource_name,
+                    pgm_data["data"],
+                    pgm_resource,
+                    list(pgm_data["data"][0].keys()),
+                    encoding="utf-8",
+                )
+
             datasets.append(dataset)
 
-        # Add resources
-        # for location in locations[:1]:
-        #     cm_data_by_location = self.get_api_data(latest_run, "cm", f"?iso={location["code"]}")
-        #     print(cm_data_by_location["data"])
-        #
-        #     pgm_data_by_location =
-        #     self.get_api_data(latest_run, "pgm", f"?iso={location["code"]}")
-        #     print(pgm_data_by_location["data"])
+        # Create codebook dataset
+        dataset_info = self._configuration
+        dataset_title = f"Codebook - {dataset_info['title']}"
+        slugified_name = slugify(dataset_title)
 
-        # data_by_year = self.format_data(data)
-        # for year, rows in data_by_year.items():
-        #     resource_name = f"{slugified_name}-{year}.csv"
-        #     resource_description = dataset_info["description"].replace("[year]", str(year))
-        #     resource = {"name": resource_name, "description": resource_description}
-        #
-        #     dataset.generate_resource_from_iterable(
-        #         headers=list(data[0].keys()),
-        #         iterable=rows,
-        #         hxltags=dataset_info["hxl_tags"],
-        #         folder=self._temp_dir,
-        #         filename=resource_name,
-        #         resourcedata=resource,
-        #         quickcharts=None
-        #     )
+        dataset = Dataset({"name": slugified_name, "title": dataset_title})
+
+        # Add dataset info
+        dataset.add_other_location("world")
+        dataset.add_tags(dataset_info["tags"])
+        dataset.set_time_period(start_date, end_date)
+
+        # Create resource
+        resource = {
+            "name": f"{slugified_name}.json",
+            "description": "Codebook containing information on model variables",
+            "url": codebook_url,
+            "format": "JSON",
+        }
+        dataset.add_update_resource(resource)
+        datasets.append(dataset)
 
         return datasets
