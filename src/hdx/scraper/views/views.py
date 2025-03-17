@@ -36,6 +36,9 @@ class Views:
             location_name = Country.get_country_name_from_iso3(iso3[0])
             locations.append({"code": iso3[0], "name": location_name})
 
+        # Manually add Kosovo even though there is no match
+        locations.append({"code": "XKX", "name": "Kosovo"})
+
         locations.sort(key=lambda x: x["name"])
         return locations
 
@@ -77,7 +80,6 @@ class Views:
     def get_api_data(self, run, loa, filters="") -> dict:
         base_url = self._configuration["base_url"]
         api_url = f"{base_url}{run}/{loa}{filters}"
-        print(api_url)
         try:
             data = self._retriever.download_json(api_url)
             return data
@@ -102,70 +104,64 @@ class Views:
         codebook_url = models[0]["Codebook"]
         latest_run = models[0]["Dataset"]
         latest_cm_data = self.get_api_data(latest_run, "cm")  # get data from latest dataset
+        latest_pgm_data = self.get_api_data(latest_run, "pgm")  # get data from latest dataset
         locations = self.get_locations(latest_cm_data["data"])
         start_date = self.get_date(latest_cm_data["start_date"])
         end_date = self.get_date(latest_cm_data["end_date"])
 
         datasets = []
-        for location in locations[:1]:
-            # Create dataset
-            dataset_info = self._configuration
-            dataset_title = f"{location['name']} - {dataset_info['title']}"
-            slugified_name = slugify(dataset_title)
+        dataset_info = self._configuration
 
-            dataset = Dataset({"name": slugified_name, "title": dataset_title})
+        # Create global dataset
+        dataset_title = f"Global - {dataset_info['title']}"
+        slugified_name = slugify(dataset_title)
+        dataset = Dataset({"name": slugified_name, "title": dataset_title})
+        dataset.add_other_location("world")
+        dataset.add_tags(dataset_info["tags"])
+        dataset.set_time_period(start_date, end_date)
 
-            # Add dataset info
-            dataset.add_country_location(location["code"])
-            dataset.add_tags(dataset_info["tags"])
-            dataset.set_time_period(start_date, end_date)
+        # Create country-month resource
+        resource_name = f"{slugified_name}-country-month.csv"
+        resource_description = (
+            dataset_info["description"]
+            .replace("(analysis)", "country")
+            .replace("codebook_url", codebook_url)
+        )
+        resource = {"name": resource_name, "description": resource_description}
+        dataset.generate_resource_from_iterable(
+            headers=list(latest_cm_data["data"][0].keys()),
+            iterable=latest_cm_data["data"],
+            hxltags=dataset_info["hxl_tags"],
+            folder=self._temp_dir,
+            filename=resource_name,
+            resourcedata=resource,
+            quickcharts=None,
+        )
 
-            # Create country-month resource
-            cm_data = self.get_api_data(latest_run, "cm", f"?iso={location['code']}")
-
-            resource_name = f"{slugified_name}-country-month.csv"
-            resource_description = dataset_info["description"]
-            resource = {
-                "name": resource_name,
-                "description": resource_description,
-            }
-            dataset.generate_resource_from_rows(
-                self._temp_dir,
-                resource_name,
-                cm_data["data"],
-                resource,
-                list(cm_data["data"][0].keys()),
-                encoding="utf-8",
-            )
-
-            # Create PRIO-GRID-month resource
-            pgm_data = self.get_api_data(latest_run, "pgm", f"?iso={location['code']}")
-            if pgm_data["data"]:
-                pgm_resource_name = f"{slugified_name}-priogrid-month.csv"
-                pgm_resource_description = dataset_info["description"]
-                pgm_resource = {
-                    "name": pgm_resource_name,
-                    "description": pgm_resource_description,
-                }
-                dataset.generate_resource_from_rows(
-                    self._temp_dir,
-                    pgm_resource_name,
-                    pgm_data["data"],
-                    pgm_resource,
-                    list(pgm_data["data"][0].keys()),
-                    encoding="utf-8",
-                )
-
-            datasets.append(dataset)
+        # Create prio-grid month resource
+        resource_name = f"{slugified_name}-priogrid-month.csv"
+        resource_description = (
+            dataset_info["description"]
+            .replace("(analysis)", "prio-grid cell")
+            .replace("codebook_url", codebook_url)
+        )
+        resource = {"name": resource_name, "description": resource_description}
+        dataset.generate_resource_from_iterable(
+            headers=list(latest_pgm_data["data"][0].keys()),
+            iterable=latest_pgm_data["data"],
+            hxltags=dataset_info["hxl_tags"],
+            folder=self._temp_dir,
+            filename=resource_name,
+            resourcedata=resource,
+            quickcharts=None,
+        )
+        datasets.append(dataset)
 
         # Create codebook dataset
-        dataset_info = self._configuration
         dataset_title = f"Codebook - {dataset_info['title']}"
         slugified_name = slugify(dataset_title)
 
         dataset = Dataset({"name": slugified_name, "title": dataset_title})
-
-        # Add dataset info
         dataset.add_other_location("world")
         dataset.add_tags(dataset_info["tags"])
         dataset.set_time_period(start_date, end_date)
@@ -179,5 +175,67 @@ class Views:
         }
         dataset.add_update_resource(resource)
         datasets.append(dataset)
+
+        # Create datasets by location
+        for location in locations[:5]:
+            # Create dataset
+            dataset_info = self._configuration
+            dataset_title = f"{location['name']} - {dataset_info['title']}"
+            slugified_name = slugify(f"{location['code']} - {dataset_info['title']}")
+
+            dataset = Dataset({"name": slugified_name, "title": dataset_title})
+
+            # Add dataset info
+            dataset.add_country_location(location["code"])
+            dataset.add_tags(dataset_info["tags"])
+            dataset.set_time_period(start_date, end_date)
+
+            # Create country-month resource
+            cm_data = self.get_api_data(latest_run, "cm", f"?iso={location['code']}")
+
+            resource_name = f"{slugified_name}-country-month.csv"
+            resource_description = (
+                dataset_info["description"]
+                .replace("(analysis)", "country")
+                .replace("codebook_url", codebook_url)
+            )
+            resource = {
+                "name": resource_name,
+                "description": resource_description,
+            }
+            dataset.generate_resource_from_iterable(
+                headers=list(cm_data["data"][0].keys()),
+                iterable=cm_data["data"],
+                hxltags=dataset_info["hxl_tags"],
+                folder=self._temp_dir,
+                filename=resource_name,
+                resourcedata=resource,
+                quickcharts=None,
+            )
+
+            # Create PRIO-GRID-month resource
+            pgm_data = self.get_api_data(latest_run, "pgm", f"?iso={location['code']}")
+            if pgm_data["data"]:
+                pgm_resource_name = f"{slugified_name}-priogrid-month.csv"
+                pgm_resource_description = (
+                    dataset_info["description"]
+                    .replace("(analysis)", "prio-grid cell")
+                    .replace("codebook_url", codebook_url)
+                )
+                pgm_resource = {
+                    "name": pgm_resource_name,
+                    "description": pgm_resource_description,
+                }
+                dataset.generate_resource_from_iterable(
+                    headers=list(pgm_data["data"][0].keys()),
+                    iterable=pgm_data["data"],
+                    hxltags=dataset_info["hxl_tags"],
+                    folder=self._temp_dir,
+                    filename=pgm_resource_name,
+                    resourcedata=pgm_resource,
+                    quickcharts=None,
+                )
+
+            datasets.append(dataset)
 
         return datasets

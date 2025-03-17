@@ -7,8 +7,10 @@ from hdx.utilities.path import temp_dir
 from hdx.utilities.retriever import Retrieve
 from hdx.utilities.useragent import UserAgent
 
+from hdx.scraper.views.views import Views
 
-class Testviews:
+
+class TestViews:
     @pytest.fixture(scope="function")
     def configuration(self, config_dir):
         UserAgent.set_global("test")
@@ -33,7 +35,7 @@ class Testviews:
 
     def test_views(self, configuration, fixtures_dir, input_dir, config_dir):
         with temp_dir(
-            "Testviews",
+            "TestViews",
             delete_on_success=True,
             delete_on_failure=False,
         ) as tempdir:
@@ -46,8 +48,75 @@ class Testviews:
                     save=False,
                     use_saved=True,
                 )
-                print(retriever)
+                views = Views(configuration, retriever, tempdir)
 
-                # dataset.update_from_yaml(
-                #     path=join(config_dir, "hdx_dataset_static.yaml")
-                # )
+                datasets = views.generate_datasets()
+                dataset = datasets[0]
+                dataset.update_from_yaml(path=join(config_dir, "hdx_dataset_static.yaml"))
+
+                assert dataset == {
+                    "name": "global-views-forecasts-data",
+                    "title": "Global - VIEWS forecasts data",
+                    "dataset_date": "[2025-02-01T00:00:00 TO 2028-01-01T23:59:59]",
+                    "tags": [
+                        {
+                            "name": "conflict-violence",
+                            "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
+                        },
+                        {
+                            "name": "fatalities",
+                            "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
+                        },
+                        {
+                            "name": "forecasting",
+                            "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
+                        },
+                        {
+                            "name": "hxl",
+                            "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
+                        },
+                    ],
+                    "license_id": "cc-by",
+                    "methodology": "https://viewsforecasting.org/early-warning-system/definitions/",
+                    "caveats": "None",
+                    "dataset_source": "Violence & Impacts Early-Warning System",
+                    "groups": [{"name": "world"}],
+                    "package_creator": "HDX Data Systems Team",
+                    "private": False,
+                    "maintainer": "b682f6f7-cd7e-4bd4-8aa7-f74138dc6313",
+                    "owner_org": "03d86d43-6add-4e30-a510-72a475e57fa3",
+                    "data_update_frequency": 30,
+                    "notes": "The Violence & Impacts Early-Warning System (VIEWS) is an "
+                    "award-winning conflict prediction system that generates monthly "
+                    "forecasts for violent conflicts across the world up to three years "
+                    "in advance. It is supported by the iterative research and development "
+                    "activities undertaken by the VIEWS consortium.",
+                }
+
+                resources = dataset.get_resources()
+                assert resources == [
+                    {
+                        "name": "global-views-forecasts-data-country-month.csv",
+                        "description": "CSV of monthly predictions for impending state-based "
+                        "conflict across the world up to three years in advance. The forecasts "
+                        "are presented as point predictions for the number of fatalities per "
+                        "country and month. See the [codebook]"
+                        "(https://api.viewsforecasting.org/fatalities002_2025_01_t01/codebook) "
+                        "for a description of available variables.",
+                        "format": "csv",
+                        "resource_type": "file.upload",
+                        "url_type": "upload",
+                    },
+                    {
+                        "description": "CSV of monthly predictions for impending state-based "
+                        "conflict across the world up to three years in advance. The "
+                        "forecasts are presented as point predictions for the number "
+                        "of fatalities per prio-grid cell and month. See the [codebook]"
+                        "(https://api.viewsforecasting.org/fatalities002_2025_01_t01/codebook) "
+                        "for a description of available variables.",
+                        "format": "csv",
+                        "name": "global-views-forecasts-data-priogrid-month.csv",
+                        "resource_type": "file.upload",
+                        "url_type": "upload",
+                    },
+                ]

@@ -2,10 +2,34 @@
 base_url: "https://api.viewsforecasting.org/"
 wiki_url: "https://github.com/prio-data/views_api/wiki/Available-datasets"
 datasets_table: "https://raw.githubusercontent.com/wiki/prio-data/views_api/Available-datasets.md"
-description: CSV of monthly predictions for impending state-based conflict across the world up to three years in advance. The forecasts are presented as point predictions for the number of fatalities per country and/or grid cell and month
+description: CSV of monthly predictions for impending state-based conflict across the world up to three years in advance. The forecasts are presented as point predictions for the number of fatalities per (analysis) and month. See the [codebook](codebook_url) for a description of available variables.
 title: VIEWS forecasts data
 
 tags:
   - conflict-violence
   - fatalities
   - forecasting
+  - hxl
+
+hxl_tags:
+  "country_id": "#country+id"
+  "name": "#country+name"
+  "gwcode": "#country+code+gw"
+  "isoab": "#country+code"
+  "year": "#date+year"
+  "month": "#date+month"
+  "pd_id": "#priogrid+id"
+  "month_id": "#date+month+id"
+  "main_mean": "#fatalities+pred+num"
+  "main_mean_ln": "#fatalities+pred+ln+num"
+  "main_dich": "#fatalities+pred+prob"
+  "surrogate_mean_ch_ln": "#fatalities+pred+confhist+ln+num"
+  "surrogate_mean_ch": "#fatalities+pred+history+confhist+num"
+  "surrogate_mean_dem_ln": "#fatalities+pred+libdem+ln+num"
+  "surrogate_mean_dem": "#fatalities+pred+libdem+num"
+  "surrogate_mean_pop_ln": "#fatalities+pred+population+ln+num"
+  "surrogate_mean_pop": "#fatalities+pred+population+num"
+  "surrogate_mean_imr_ln": "#fatalities+pred+imr+ln+num"
+  "surrogate_mean_imr": "#fatalities+pred+imr+num"
+  "surrogate_mean_nch_ln": "#fatalities+pred+nbconf+ln+num"
+  "surrogate_mean_nch": "#fatalities+pred+nbconf+num"
