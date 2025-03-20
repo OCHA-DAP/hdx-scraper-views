@@ -11,6 +11,14 @@ attrs==25.3.0
     #   jsonlines
     #   jsonschema
     #   referencing
+beautifulsoup4==4.13.3
+    # via
+    #   -c requirements.txt
+    #   bs4
+bs4==0.0.2
+    # via
+    #   -c requirements.txt
+    #   hdx-scraper-views (pyproject.toml)
 certifi==2025.1.31
     # via
     #   -c requirements.txt
@@ -70,7 +78,7 @@ hdx-python-country==3.8.8
     # via
     #   -c requirements.txt
     #   hdx-python-api
-hdx-python-utilities==3.8.4
+hdx-python-utilities==3.8.5
     # via
     #   -c requirements.txt
     #   hdx-scraper-views (pyproject.toml)
@@ -93,7 +101,7 @@ inflect==7.5.0
     # via
     #   -c requirements.txt
     #   quantulum3
-iniconfig==2.0.0
+iniconfig==2.1.0
     # via pytest
 isodate==0.7.2
     # via
@@ -266,7 +274,7 @@ ruamel-yaml-clib==0.2.12
     # via
     #   -c requirements.txt
     #   ruamel-yaml
-setuptools==76.0.0
+setuptools==77.0.3
     # via
     #   -c requirements.txt
     #   ckanapi
@@ -289,6 +297,10 @@ six==1.17.0
     #   pockets
     #   python-dateutil
     #   sphinxcontrib-napoleon
+soupsieve==2.6
+    # via
+    #   -c requirements.txt
+    #   beautifulsoup4
 sphinxcontrib-napoleon==0.7
     # via
     #   -c requirements.txt
@@ -328,6 +340,7 @@ typer==0.15.2
 typing-extensions==4.12.2
     # via
     #   -c requirements.txt
+    #   beautifulsoup4
     #   frictionless
     #   pydantic
     #   pydantic-core
