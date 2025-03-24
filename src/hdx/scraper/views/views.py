@@ -5,7 +5,6 @@ import logging
 from datetime import datetime
 from typing import List
 
-import requests
 from bs4 import BeautifulSoup
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
@@ -50,8 +49,8 @@ class Views:
         Returns:
             List of available datasets
         """
-        response = requests.get(self._configuration["wiki_url"])
-        html_content = response.text
+        response = self._retriever.download_text(self._configuration["wiki_url"], filename="wiki")
+        html_content = response
 
         # Parse the HTML
         soup = BeautifulSoup(html_content, "html.parser")
@@ -81,7 +80,7 @@ class Views:
         base_url = self._configuration["base_url"]
         api_url = f"{base_url}{run}/{loa}{filters}"
         try:
-            data = self._retriever.download_json(api_url)
+            data = self._retriever.download_json(api_url, f"{run.replace('_', '-')}-{loa}.json")
             return data
         except DownloadError as e:
             logger.error(f"Could not get data from {api_url} {e}")
@@ -186,7 +185,12 @@ class Views:
             dataset = Dataset({"name": slugified_name, "title": dataset_title})
 
             # Add dataset info
-            dataset.add_country_location(location["code"])
+            if location["code"] == "XKX":
+                dataset.add_other_location("Kosovo")
+            else:
+                dataset.add_country_location(location["code"])
+            # dataset.add_country_location(location["name"], False)
+            # dataset["groups"] = [{"name": location["name"]}]
             dataset.add_tags(dataset_info["tags"])
             dataset.set_time_period(start_date, end_date)
 

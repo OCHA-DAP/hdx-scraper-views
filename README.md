@@ -3,7 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/OCHA-DAP/hdx-scraper-views/badge.svg?branch=main&ts=1)](https://coveralls.io/github/OCHA-DAP/hdx-scraper-views?branch=main)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-This script ...
+This script connects to the VIEWS API to extract latest forecast data by country-month and PRIO_GRID month analysis. It creates 1 global dataset with 2 resources and 1 dataset with 2 resources per country in HDX and is run every month.
 
 ## Development
 
@@ -21,7 +21,6 @@ development by running:
     pip install -r requirements.txt
 
 ### Installing and running
-
 
 For the script to run, you will need to have a file called
 .hdx_configuration.yaml in your home directory containing your HDX key, e.g.:
@@ -43,13 +42,6 @@ To install and run, execute:
     pip install .
     python -m hdx.scraper.views
 
-## Environment
-
-Development is currently done using Python 3.11. We recommend using a virtual
-environment such as ``venv``:
-
-    python3.12 -m venv venv
-    source venv/bin/activate
 
 ### Pre-commit
 

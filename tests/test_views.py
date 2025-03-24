@@ -50,6 +50,50 @@ class TestViews:
                 )
                 views = Views(configuration, retriever, tempdir)
 
+                models = views.get_models_list()
+                assert models == [
+                    {
+                        "Dataset": "fatalities002_2025_01_t01",
+                        "Model name": "fatalities",
+                        "Model version": "002",
+                        "Last input data": "2025-01",
+                        "Forecasting window": "2025-02 - 2028-01",
+                        "Release date": "2025-02-24",
+                        "Codebook": "https://api.viewsforecasting.org/"
+                        "fatalities002_2025_01_t01/codebook",
+                    },
+                    {
+                        "Dataset": "fatalities002_2024_12_t01",
+                        "Model name": "fatalities",
+                        "Model version": "002",
+                        "Last input data": "2024-12",
+                        "Forecasting window": "2025-01 - 2027-12",
+                        "Release date": "2025-01-27",
+                        "Codebook": "https://api.viewsforecasting.org/"
+                        "fatalities002_2024_12_t01/codebook",
+                    },
+                    {
+                        "Dataset": "fatalities002_2024_11_t01",
+                        "Model name": "fatalities",
+                        "Model version": "002",
+                        "Last input data": "2024-11",
+                        "Forecasting window": "2024-12 - 2027-11",
+                        "Release date": "2025-01-11",
+                        "Codebook": "https://api.viewsforecasting.org/"
+                        "fatalities002_2024_11_t01/codebook",
+                    },
+                ]
+
+                latest_cm_data = views.get_api_data(models[0]["Dataset"], "cm")
+
+                locations = views.get_locations(latest_cm_data["data"])
+                locations.pop()
+                assert locations == [
+                    {"code": "AFG", "name": "Afghanistan"},
+                    {"code": "ALB", "name": "Albania"},
+                    {"code": "DZA", "name": "Algeria"},
+                ]
+
                 datasets = views.generate_datasets()
                 dataset = datasets[0]
                 dataset.update_from_yaml(path=join(config_dir, "hdx_dataset_static.yaml"))
