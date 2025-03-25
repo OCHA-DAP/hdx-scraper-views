@@ -189,8 +189,6 @@ class Views:
                 dataset.add_other_location("Kosovo")
             else:
                 dataset.add_country_location(location["code"])
-            # dataset.add_country_location(location["name"], False)
-            # dataset["groups"] = [{"name": location["name"]}]
             dataset.add_tags(dataset_info["tags"])
             dataset.set_time_period(start_date, end_date)
 
@@ -219,6 +217,13 @@ class Views:
 
             # Create PRIO-GRID-month resource
             pgm_data = self.get_api_data(latest_run, "pgm", f"?iso={location['code']}")
+
+            # Append country info to beginning of each row in dataset
+            pgm_data_updated = [
+                {"isoab": location["code"], "name": location["name"], **row}
+                for row in pgm_data["data"]
+            ]
+
             if pgm_data["data"]:
                 pgm_resource_name = f"{slugified_name}-priogrid-month.csv"
                 pgm_resource_description = (
@@ -231,8 +236,8 @@ class Views:
                     "description": pgm_resource_description,
                 }
                 dataset.generate_resource_from_iterable(
-                    headers=list(pgm_data["data"][0].keys()),
-                    iterable=pgm_data["data"],
+                    headers=list(pgm_data_updated[0].keys()),
+                    iterable=pgm_data_updated,
                     hxltags=dataset_info["hxl_tags"],
                     folder=self._temp_dir,
                     filename=pgm_resource_name,

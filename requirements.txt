@@ -40,7 +40,7 @@ frictionless==5.18.0
     # via hdx-python-utilities
 hdx-python-api==6.3.8
     # via hdx-scraper-views (pyproject.toml)
-hdx-python-country==3.9.1
+hdx-python-country==3.9.2
     # via hdx-python-api
 hdx-python-utilities==3.8.5
     # via

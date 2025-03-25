@@ -74,7 +74,7 @@ hdx-python-api==6.3.8
     # via
     #   -c requirements.txt
     #   hdx-scraper-views (pyproject.toml)
-hdx-python-country==3.9.1
+hdx-python-country==3.9.2
     # via
     #   -c requirements.txt
     #   hdx-python-api

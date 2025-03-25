@@ -87,11 +87,11 @@ class TestViews:
                 latest_cm_data = views.get_api_data(models[0]["Dataset"], "cm")
 
                 locations = views.get_locations(latest_cm_data["data"])
-                locations.pop()
                 assert locations == [
                     {"code": "AFG", "name": "Afghanistan"},
                     {"code": "ALB", "name": "Albania"},
                     {"code": "DZA", "name": "Algeria"},
+                    {"code": "XKX", "name": "Kosovo"},
                 ]
 
                 datasets = views.generate_datasets()
