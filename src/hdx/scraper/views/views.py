@@ -176,7 +176,7 @@ class Views:
         datasets.append(dataset)
 
         # Create datasets by location
-        for location in locations[:5]:
+        for location in locations:
             # Create dataset
             dataset_info = self._configuration
             dataset_title = f"{location['name']} - {dataset_info['title']}"
