@@ -99,8 +99,8 @@ class TestViews:
                 dataset.update_from_yaml(path=join(config_dir, "hdx_dataset_static.yaml"))
 
                 assert dataset == {
-                    "name": "global-views-forecasts-data",
-                    "title": "Global - VIEWS forecasts data",
+                    "name": "afg-views-conflict-forecasts",
+                    "title": "Afghanistan - VIEWS conflict forecasts",
                     "dataset_date": "[2025-02-01T00:00:00 TO 2028-01-01T23:59:59]",
                     "tags": [
                         {
@@ -120,11 +120,11 @@ class TestViews:
                             "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
                         },
                     ],
-                    "license_id": "cc-by",
+                    "license_id": "cc-by-sa",
                     "methodology": "https://viewsforecasting.org/early-warning-system/definitions/",
                     "caveats": "None",
                     "dataset_source": "Violence & Impacts Early-Warning System",
-                    "groups": [{"name": "world"}],
+                    "groups": [{"name": "afg"}],
                     "package_creator": "HDX Data Systems Team",
                     "private": False,
                     "maintainer": "b682f6f7-cd7e-4bd4-8aa7-f74138dc6313",
@@ -133,16 +133,16 @@ class TestViews:
                     "notes": "The Violence & Impacts Early-Warning System (VIEWS) is an "
                     "award-winning conflict prediction system that generates monthly "
                     "forecasts for violent conflicts across the world up to three years "
-                    "in advance. It is supported by the iterative research and development "
-                    "activities undertaken by the VIEWS consortium.",
+                    "in advance. It is supported by the iterative research and "
+                    "development activities undertaken by the VIEWS consortium.",
                 }
 
                 resources = dataset.get_resources()
                 assert resources == [
                     {
-                        "name": "global-views-forecasts-data-country-month.csv",
+                        "name": "afg-views-conflict-forecasts-country-month.csv",
                         "description": "CSV of monthly predictions for impending state-based "
-                        "conflict across the world up to three years in advance. The forecasts "
+                        "conflict up to three years in advance. The forecasts "
                         "are presented as point predictions for the number of fatalities per "
                         "country and month. See the [codebook]"
                         "(https://api.viewsforecasting.org/fatalities002_2025_01_t01/codebook) "
@@ -153,13 +153,13 @@ class TestViews:
                     },
                     {
                         "description": "CSV of monthly predictions for impending state-based "
-                        "conflict across the world up to three years in advance. The "
+                        "conflict up to three years in advance. The "
                         "forecasts are presented as point predictions for the number "
                         "of fatalities per prio-grid cell and month. See the [codebook]"
                         "(https://api.viewsforecasting.org/fatalities002_2025_01_t01/codebook) "
                         "for a description of available variables.",
                         "format": "csv",
-                        "name": "global-views-forecasts-data-priogrid-month.csv",
+                        "name": "afg-views-conflict-forecasts-priogrid-month.csv",
                         "resource_type": "file.upload",
                         "url_type": "upload",
                     },

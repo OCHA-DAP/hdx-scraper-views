@@ -2,8 +2,10 @@
 base_url: "https://api.viewsforecasting.org/"
 wiki_url: "https://github.com/prio-data/views_api/wiki/Available-datasets"
 datasets_table: "https://raw.githubusercontent.com/wiki/prio-data/views_api/Available-datasets.md"
-description: CSV of monthly predictions for impending state-based conflict across the world up to three years in advance. The forecasts are presented as point predictions for the number of fatalities per (analysis) and month. See the [codebook](codebook_url) for a description of available variables.
-title: VIEWS forecasts data
+description: CSV of monthly predictions for impending state-based conflict up to three years in advance. The forecasts are presented as point predictions for the number of fatalities per (analysis) and month. See the [codebook](codebook_url) for a description of available variables.
+description_pgm: CSV of monthly predictions for impending state-based conflict in Africa and the Middle East up to three years in advance. The forecasts are presented as point predictions for the number of fatalities per (analysis) and month. See the [codebook](codebook_url) for a description of available variables.
+
+title: VIEWS conflict forecasts
 
 tags:
   - conflict-violence
