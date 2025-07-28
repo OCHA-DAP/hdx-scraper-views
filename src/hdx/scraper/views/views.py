@@ -54,7 +54,13 @@ class Views:
 
         # Parse the HTML
         soup = BeautifulSoup(html_content, "html.parser")
-        table = soup.find("table", {"role": "table"})
+        tables = soup.find_all("table", {"role": "table"})
+
+        if len(tables) < 2:
+            raise ValueError("Less than two tables with role='table' found on the page")
+
+        # Select second table on the page -- there is a risk that this structure will change
+        table = tables[1]
         rows = table.find_all("tr")
 
         # Get headers
