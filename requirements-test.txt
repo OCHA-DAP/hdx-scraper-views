@@ -161,7 +161,7 @@ more-itertools==10.7.0
     # via
     #   -c requirements.txt
     #   inflect
-num2words==0.5.16
+num2words==0.5.14
     # via
     #   -c requirements.txt
     #   quantulum3

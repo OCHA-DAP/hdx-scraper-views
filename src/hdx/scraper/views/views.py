@@ -86,7 +86,9 @@ class Views:
         base_url = self._configuration["base_url"]
         api_url = f"{base_url}{run}/{loa}{filters}"
         try:
-            data = self._retriever.download_json(api_url, f"{run.replace('_', '-')}-{loa}.json")
+            data = self._retriever.download_json(
+                api_url, f"{run}-{loa}.json"
+            )  # run.replace('_', '-')
             return data
         except DownloadError as e:
             logger.error(f"Could not get data from {api_url} {e}")

@@ -53,34 +53,34 @@ class TestViews:
                 models = views.get_models_list()
                 assert models == [
                     {
-                        "Dataset": "fatalities002_2025_01_t01",
+                        "Dataset": "fatalities002_2025_06_t01",
                         "Model name": "fatalities",
                         "Model version": "002",
-                        "Last input data": "2025-01",
-                        "Forecasting window": "2025-02 - 2028-01",
-                        "Release date": "2025-02-24",
+                        "Last input data": "2025-06",
+                        "Forecasting window": "2025-07 - 2028-06",
+                        "Release date": "2025-07-23",
                         "Codebook": "https://api.viewsforecasting.org/"
-                        "fatalities002_2025_01_t01/codebook",
+                        "fatalities002_2025_06_t01/codebook",
                     },
                     {
-                        "Dataset": "fatalities002_2024_12_t01",
+                        "Dataset": "fatalities002_2025_05_t01",
                         "Model name": "fatalities",
                         "Model version": "002",
-                        "Last input data": "2024-12",
-                        "Forecasting window": "2025-01 - 2027-12",
-                        "Release date": "2025-01-27",
+                        "Last input data": "2025-05",
+                        "Forecasting window": "2025-06 - 2028-05",
+                        "Release date": "2025-07-23",
                         "Codebook": "https://api.viewsforecasting.org/"
-                        "fatalities002_2024_12_t01/codebook",
+                        "fatalities002_2025_05_t01/codebook",
                     },
                     {
-                        "Dataset": "fatalities002_2024_11_t01",
+                        "Dataset": "fatalities002_2025_04_t01",
                         "Model name": "fatalities",
                         "Model version": "002",
-                        "Last input data": "2024-11",
-                        "Forecasting window": "2024-12 - 2027-11",
-                        "Release date": "2025-01-11",
+                        "Last input data": "2025-04",
+                        "Forecasting window": "2025-05 - 2028-04",
+                        "Release date": "2025-07-23",
                         "Codebook": "https://api.viewsforecasting.org/"
-                        "fatalities002_2024_11_t01/codebook",
+                        "fatalities002_2025_04_t01/codebook",
                     },
                 ]
 
@@ -101,7 +101,7 @@ class TestViews:
                 assert dataset == {
                     "name": "afg-views-conflict-forecasts",
                     "title": "Afghanistan - VIEWS conflict forecasts",
-                    "dataset_date": "[2025-02-01T00:00:00 TO 2028-01-01T23:59:59]",
+                    "dataset_date": "[2025-07-01T00:00:00 TO 2028-06-01T23:59:59]",
                     "tags": [
                         {
                             "name": "conflict-violence",
@@ -145,7 +145,7 @@ class TestViews:
                         "conflict up to three years in advance. The forecasts "
                         "are presented as point predictions for the number of fatalities per "
                         "country and month. See the [codebook]"
-                        "(https://api.viewsforecasting.org/fatalities002_2025_01_t01/codebook) "
+                        "(https://api.viewsforecasting.org/fatalities002_2025_06_t01/codebook) "
                         "for a description of available variables.",
                         "format": "csv",
                         "resource_type": "file.upload",
@@ -156,7 +156,7 @@ class TestViews:
                         "conflict up to three years in advance. The "
                         "forecasts are presented as point predictions for the number "
                         "of fatalities per prio-grid cell and month. See the [codebook]"
-                        "(https://api.viewsforecasting.org/fatalities002_2025_01_t01/codebook) "
+                        "(https://api.viewsforecasting.org/fatalities002_2025_06_t01/codebook) "
                         "for a description of available variables.",
                         "format": "csv",
                         "name": "afg-views-conflict-forecasts-priogrid-month.csv",
