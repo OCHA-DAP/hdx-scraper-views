@@ -148,8 +148,6 @@ class TestViews:
                         "(https://api.viewsforecasting.org/fatalities002_2025_06_t01/codebook) "
                         "for a description of available variables.",
                         "format": "csv",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                     {
                         "description": "CSV of monthly predictions for impending state-based "
@@ -160,7 +158,5 @@ class TestViews:
                         "for a description of available variables.",
                         "format": "csv",
                         "name": "afg-views-conflict-forecasts-priogrid-month.csv",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                 ]
