@@ -1,39 +1,14 @@
 from os.path import join
 
-import pytest
-from hdx.api.configuration import Configuration
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import temp_dir
 from hdx.utilities.retriever import Retrieve
-from hdx.utilities.useragent import UserAgent
 
-from hdx.scraper.views.views import Views
+from hdx.scraper.views.pipeline import Pipeline
 
 
-class TestViews:
-    @pytest.fixture(scope="function")
-    def configuration(self, config_dir):
-        UserAgent.set_global("test")
-        Configuration._create(
-            hdx_read_only=True,
-            hdx_site="prod",
-            project_config_yaml=join(config_dir, "project_configuration.yaml"),
-        )
-        return Configuration.read()
-
-    @pytest.fixture(scope="class")
-    def fixtures_dir(self):
-        return join("tests", "fixtures")
-
-    @pytest.fixture(scope="class")
-    def input_dir(self, fixtures_dir):
-        return join(fixtures_dir, "input")
-
-    @pytest.fixture(scope="class")
-    def config_dir(self, fixtures_dir):
-        return join("src", "hdx", "scraper", "views", "config")
-
-    def test_views(self, configuration, fixtures_dir, input_dir, config_dir):
+class TestPipeline:
+    def test_pipeline(self, configuration, fixtures_dir, input_dir, config_dir):
         with temp_dir(
             "TestViews",
             delete_on_success=True,
@@ -48,9 +23,9 @@ class TestViews:
                     save=False,
                     use_saved=True,
                 )
-                views = Views(configuration, retriever, tempdir)
+                pipeline = Pipeline(configuration, retriever, tempdir)
 
-                models = views.get_models_list()
+                models = pipeline.get_models_list()
                 assert models == [
                     {
                         "Dataset": "fatalities002_2025_06_t01",
@@ -84,19 +59,20 @@ class TestViews:
                     },
                 ]
 
-                latest_cm_data = views.get_api_data(models[0]["Dataset"], "cm")
+                latest_cm_data = pipeline.get_api_data(models[0]["Dataset"], "cm")
 
-                locations = views.get_locations(latest_cm_data["data"])
+                locations = pipeline.get_locations(latest_cm_data["data"])
                 assert locations == [
                     {"code": "AFG", "name": "Afghanistan"},
                     {"code": "ALB", "name": "Albania"},
                     {"code": "DZA", "name": "Algeria"},
                     {"code": "XKX", "name": "Kosovo"},
                 ]
-
-                datasets = views.generate_datasets()
+                datasets = pipeline.generate_datasets()
                 dataset = datasets[0]
-                dataset.update_from_yaml(path=join(config_dir, "hdx_dataset_static.yaml"))
+                dataset.update_from_yaml(
+                    path=join(config_dir, "hdx_dataset_static.yaml")
+                )
 
                 assert dataset == {
                     "name": "afg-views-conflict-forecasts",
@@ -148,8 +124,6 @@ class TestViews:
                         "(https://api.viewsforecasting.org/fatalities002_2025_06_t01/codebook) "
                         "for a description of available variables.",
                         "format": "csv",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                     {
                         "description": "CSV of monthly predictions for impending state-based "
@@ -160,7 +134,5 @@ class TestViews:
                         "for a description of available variables.",
                         "format": "csv",
                         "name": "afg-views-conflict-forecasts-priogrid-month.csv",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                 ]
