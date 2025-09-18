@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""views scraper"""
+"""Views scraper"""
 
 import logging
 from datetime import datetime
@@ -16,11 +16,11 @@ from slugify import slugify
 logger = logging.getLogger(__name__)
 
 
-class Views:
-    def __init__(self, configuration: Configuration, retriever: Retrieve, temp_dir: str):
+class Pipeline:
+    def __init__(self, configuration: Configuration, retriever: Retrieve, tempdir: str):
         self._configuration = configuration
         self._retriever = retriever
-        self._temp_dir = temp_dir
+        self._tempdir = tempdir
 
     def get_locations(self, data) -> List:
         countries = {row["name"] for row in data}
@@ -49,7 +49,9 @@ class Views:
         Returns:
             List of available datasets
         """
-        response = self._retriever.download_text(self._configuration["wiki_url"], filename="wiki")
+        response = self._retriever.download_text(
+            self._configuration["wiki_url"], filename="wiki"
+        )
         html_content = response
 
         # Parse the HTML
@@ -104,14 +106,20 @@ class Views:
         year = start_year + (total_months // 12)
         month = start_month + (total_months % 12)
 
-        return f"{datetime(year, month, 1).strftime('%B %d %Y')}"  # Format: 'Month Year'
+        return (
+            f"{datetime(year, month, 1).strftime('%B %d %Y')}"  # Format: 'Month Year'
+        )
 
     def generate_datasets(self) -> List:
         models = self.get_models_list()
         codebook_url = models[0]["Codebook"]
         latest_run = models[0]["Dataset"]
-        latest_cm_data = self.get_api_data(latest_run, "cm")  # get data from latest dataset
-        latest_pgm_data = self.get_api_data(latest_run, "pgm")  # get data from latest dataset
+        latest_cm_data = self.get_api_data(
+            latest_run, "cm"
+        )  # get data from latest dataset
+        latest_pgm_data = self.get_api_data(
+            latest_run, "pgm"
+        )  # get data from latest dataset
         locations = self.get_locations(latest_cm_data["data"])
         start_date = self.get_date(latest_cm_data["start_date"])
         end_date = self.get_date(latest_cm_data["end_date"])
@@ -153,7 +161,7 @@ class Views:
                 headers=list(cm_data["data"][0].keys()),
                 iterable=cm_data["data"],
                 hxltags=dataset_info["hxl_tags"],
-                folder=self._temp_dir,
+                folder=self._tempdir,
                 filename=resource_name,
                 resourcedata=resource,
                 quickcharts=None,
@@ -183,7 +191,7 @@ class Views:
                     headers=list(pgm_data_updated[0].keys()),
                     iterable=pgm_data_updated,
                     hxltags=dataset_info["hxl_tags"],
-                    folder=self._temp_dir,
+                    folder=self._tempdir,
                     filename=pgm_resource_name,
                     resourcedata=pgm_resource,
                     quickcharts=None,
@@ -230,7 +238,7 @@ class Views:
             headers=list(latest_cm_data["data"][0].keys()),
             iterable=latest_cm_data["data"],
             hxltags=dataset_info["hxl_tags"],
-            folder=self._temp_dir,
+            folder=self._tempdir,
             filename=resource_name,
             resourcedata=resource,
             quickcharts=None,
@@ -248,7 +256,7 @@ class Views:
             headers=list(latest_pgm_data["data"][0].keys()),
             iterable=latest_pgm_data["data"],
             hxltags=dataset_info["hxl_tags"],
-            folder=self._temp_dir,
+            folder=self._tempdir,
             filename=resource_name,
             resourcedata=resource,
             quickcharts=None,
