@@ -91,10 +91,6 @@ class TestPipeline:
                             "name": "forecasting",
                             "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
                         },
-                        {
-                            "name": "hxl",
-                            "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
-                        },
                     ],
                     "license_id": "cc-by-sa",
                     "methodology": "https://viewsforecasting.org/early-warning-system/definitions/",

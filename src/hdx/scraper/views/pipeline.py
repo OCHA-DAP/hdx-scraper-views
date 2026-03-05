@@ -157,14 +157,12 @@ class Pipeline:
                 "name": resource_name,
                 "description": resource_description,
             }
-            dataset.generate_resource_from_iterable(
-                headers=list(cm_data["data"][0].keys()),
-                iterable=cm_data["data"],
-                hxltags=dataset_info["hxl_tags"],
+            dataset.generate_resource(
                 folder=self._tempdir,
                 filename=resource_name,
+                rows=cm_data["data"],
                 resourcedata=resource,
-                quickcharts=None,
+                headers=list(cm_data["data"][0].keys()),
             )
 
             # Create PRIO-GRID-month resource
@@ -187,14 +185,12 @@ class Pipeline:
                     "name": pgm_resource_name,
                     "description": pgm_resource_description,
                 }
-                dataset.generate_resource_from_iterable(
-                    headers=list(pgm_data_updated[0].keys()),
-                    iterable=pgm_data_updated,
-                    hxltags=dataset_info["hxl_tags"],
+                dataset.generate_resource(
                     folder=self._tempdir,
                     filename=pgm_resource_name,
+                    rows=pgm_data_updated,
                     resourcedata=pgm_resource,
-                    quickcharts=None,
+                    headers=list(pgm_data_updated[0].keys()),
                 )
 
             datasets.append(dataset)
@@ -234,14 +230,12 @@ class Pipeline:
             .replace("codebook_url", codebook_url)
         )
         resource = {"name": resource_name, "description": resource_description}
-        dataset.generate_resource_from_iterable(
-            headers=list(latest_cm_data["data"][0].keys()),
-            iterable=latest_cm_data["data"],
-            hxltags=dataset_info["hxl_tags"],
+        dataset.generate_resource(
             folder=self._tempdir,
             filename=resource_name,
+            rows=latest_cm_data["data"],
             resourcedata=resource,
-            quickcharts=None,
+            headers=list(latest_cm_data["data"][0].keys()),
         )
 
         # Create prio-grid month resource
@@ -252,14 +246,12 @@ class Pipeline:
             .replace("codebook_url", codebook_url)
         )
         resource = {"name": resource_name, "description": resource_description}
-        dataset.generate_resource_from_iterable(
-            headers=list(latest_pgm_data["data"][0].keys()),
-            iterable=latest_pgm_data["data"],
-            hxltags=dataset_info["hxl_tags"],
+        dataset.generate_resource(
             folder=self._tempdir,
             filename=resource_name,
+            rows=latest_pgm_data["data"],
             resourcedata=resource,
-            quickcharts=None,
+            headers=list(latest_pgm_data["data"][0].keys()),
         )
         datasets.append(dataset)
 
